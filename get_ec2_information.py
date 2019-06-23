@@ -1,6 +1,7 @@
 # author : lavaraja padala
 # email : lavaraja.padala@gmail.com
-
+# Currently only General Purpose Volumes are monitored as per the script
+from xml.dom.expatbuilder import FILTER_SKIP
 
 import boto3
 
@@ -61,9 +62,20 @@ print("\n")
 
 
 # To get IOPS and SIZE for the associated volumes. This will help in reviewing the IOPS asscoated to particular volume.
+volumetypes=['gp2']
+
+response = ec2.describe_volumes(
+
+    Filters = [
+              {
+                  'Name': 'volume-type',
+                  'Values':volumetypes,
+              },
+
+          ], VolumeIds=list(instance_report.VolumeId.unique())
+)
 
 
-response = ec2.describe_volumes( VolumeIds=list(instance_report.VolumeId.unique()))
 report = []
 
 for volume in response.get("Volumes"):
